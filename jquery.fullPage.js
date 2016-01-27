@@ -889,12 +889,26 @@
                     }
                 }
 
+                //if scrolled to bottom, take the last section
+                var lastSectionIndex = sections.length - 1;
+                var scrolledToLastSectionBottom = false;
+                if(lastSectionIndex >= 0){
+                    var lastSection = sections[lastSectionIndex];
+                    var maxScrollTop = lastSection.offsetTop + lastSection.scrollHeight - $window.innerHeight();
+
+                    //similar to `isScrolled()`, already trigger if at most one pixel away from bottom
+                    if(currentScroll + 1 >= maxScrollTop){
+                        visibleSectionIndex = lastSectionIndex;
+                        scrolledToLastSectionBottom = true;
+                    }
+                }
+
                 //geting the last one, the current one on the screen
                 currentSection = $(sections).eq(visibleSectionIndex);
 
                 //setting the visible section as active when manually scrolling
-                //executing only once the first time we reach the section
-                if(!currentSection.hasClass(ACTIVE)){
+                //execute also for AUTO_HEIGHT section if scrolled to bottom of last section
+                if(!currentSection.hasClass(ACTIVE) && (!currentSection.hasClass(AUTO_HEIGHT) || scrolledToLastSectionBottom)){
                     isScrolling = true;
                     var leavingSection = $(SECTION_ACTIVE_SEL);
                     var leavingSectionIndex = leavingSection.index(SECTION_SEL) + 1;
